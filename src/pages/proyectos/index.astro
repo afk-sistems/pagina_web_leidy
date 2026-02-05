@@ -1,0 +1,13 @@
+---
+import ProductList from "../../components/ProductList.vue";
+import Layout from "../../layouts/Layout.astro";
+
+---
+
+<Layout title="Proyectos">
+    <section class="pt-16">
+        <ProductList client:load></ProductList>
+
+    </section>
+
+</Layout>

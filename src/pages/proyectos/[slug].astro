@@ -1,0 +1,336 @@
+---
+import { ProjectService } from "../../services/project.service";
+import Layout from "../../layouts/Layout.astro";
+import type { IProject } from "../../interfaces/project.interface";
+import { phoneNumbers } from "../../lib/phone-numbers";
+ 
+
+const {slug} = Astro.params;
+
+if(!slug) return Astro.redirect('/');
+
+const project = await new ProjectService().getPropertyBySlug(slug) as IProject;
+
+if(!project) throw new Error('Project not found');
+
+
+
+//project.images = JSON.parse(project.images as unknown as string)
+
+// Format price with currency
+const formatPrice = (price: number, currency: string) => {
+    return new Intl.NumberFormat('es-PE', {
+        style: 'currency',
+        currency,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(price);
+};
+
+const displayPrice = project.on_sale && project.offer_price 
+    ? formatPrice(project.offer_price, project.currency_symbol)
+    : formatPrice(project.min_price, project.currency_symbol);
+
+const originalPrice = project.on_sale && project.offer_price 
+    ? formatPrice(project.min_price, project.currency_symbol)
+    : null;
+
+const randomIndex = Math.floor(Math.random() * phoneNumbers.length);
+const randomPhone = phoneNumbers[randomIndex];
+
+
+const capitalName = project.name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+const waLink = `https://wa.me/${randomPhone}?text=Hola, estoy interesado en ${capitalName}`;
+const projectId = project.id;
+---
+
+<Layout title={capitalName}>
+    <div class="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <!-- Hero Section with Image Gallery -->
+        <section class="relative h-[60vh] md:h-[70vh] overflow-hidden bg-gray-900">
+            {project.images && project.images.length > 0 ? (
+                <div class="image-gallery relative w-full h-full">
+                    <div class="main-image w-full h-full">
+                        <img 
+                            src={project.images[0].url} 
+                            alt={project.images[0].alt}
+                            class="w-full h-full object-cover"
+                        />
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    
+                    <!-- Image Counter -->
+                    <div class="absolute top-6 right-6 bg-black/70 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium">
+                        📸 {project.images.length} {project.images.length === 1 ? 'foto' : 'fotos'}
+                    </div>
+
+                    <!-- On Sale Badge -->
+                    {project.on_sale && (
+                        <div class="absolute top-6 left-6 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg animate-pulse">
+                            🔥 EN OFERTA
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div class="w-full h-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
+                    <p class="text-white text-2xl">Sin imágenes disponibles</p>
+                </div>
+            )}
+
+            <!-- Property Title Overlay -->
+            <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+                <div class="max-w-7xl mx-auto">
+                    <div class="inline-block bg-brand-500 text-white px-4 py-1 rounded-full text-sm font-semibold mb-4">
+                        {project.category_name}
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-bold text-white mb-3 drop-shadow-lg">
+                        {capitalName}
+                    </h1>
+                    
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column - Main Info -->
+                <div class="lg:col-span-2 space-y-8">
+
+                    <!-- Description -->
+                    <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <svg class="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Descripción
+                        </h2>
+                        <div class="prose prose-lg max-w-none text-gray-600 leading-relaxed">
+                            {project.description}
+                        </div>
+                    </div>
+
+                    <!-- Price Card -->
+                    <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                        <div class="flex items-baseline gap-4 mb-4">
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Precios desde</p>
+                                <p class="text-4xl md:text-5xl font-bold text-brand-600">
+                                    {displayPrice}
+                                </p>
+                            </div>
+                            {originalPrice && (
+                                <p class="text-2xl text-gray-400 line-through">
+                                    {originalPrice}
+                                </p>
+                            )}
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 pt-6 border-t border-gray-200">
+                            <div>
+                                <p class="text-sm text-gray-500">Áreas desde</p>
+                                <p class="text-2xl font-bold text-gray-800">{project.min_area} m²</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Lotes disponibles</p>
+                                <p class="text-2xl font-bold text-gray-800">{project.lot_count}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+
+                    <!-- Amenities -->
+                    <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                            <svg class="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Servicios Básicos
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class={`p-6 rounded-xl border-2 transition-all ${project.has_water ? 'bg-brand-50 border-brand-500' : 'bg-gray-50 border-gray-200 opacity-50'}`}>
+                                <div class="text-center">
+                                    <div class="text-4xl mb-2">💧</div>
+                                    <p class="font-semibold text-gray-800">Agua</p>
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        {project.has_water ? 'Disponible' : 'No disponible'}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class={`p-6 rounded-xl border-2 transition-all ${project.has_electricity ? 'bg-brand-50 border-brand-500' : 'bg-gray-50 border-gray-200 opacity-50'}`}>
+                                <div class="text-center">
+                                    <div class="text-4xl mb-2">⚡</div>
+                                    <p class="font-semibold text-gray-800">Luz</p>
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        {project.has_electricity ? 'Disponible' : 'No disponible'}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class={`p-6 rounded-xl border-2 transition-all ${project.has_sewer ? 'bg-brand-50 border-brand-500' : 'bg-gray-50 border-gray-200 opacity-50'}`}>
+                                <div class="text-center">
+                                    <div class="text-4xl mb-2">🚰</div>
+                                    <p class="font-semibold text-gray-800">Desagüe</p>
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        {project.has_sewer ? 'Disponible' : 'No disponible'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Map -->
+                    {(project.latitude && project.longitude) && (
+                        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-brand-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                </svg>
+                                Ubicación
+                            </h2>
+                            <div class="aspect-video rounded-xl overflow-hidden bg-gray-100">
+                                <div id="map" class="w-full h-full" data-lat={project.latitude} data-lng={project.longitude}></div>
+                            </div>
+                            <p class="mt-4 text-gray-600 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-brand-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                </svg>
+                                {project.district_name}
+                            </p>
+                        </div>
+                    )}
+
+                    <!-- Image Gallery Grid -->
+                     {
+                        project.video_link && (
+                            <div class="overflow-hidden border border-gray-100 rounded-2xl shadow-xl">
+                                <lite-youtube videoid={project.video_link} autopause></lite-youtube>
+                            </div>
+                        )
+                     }
+
+                    
+                    
+                </div>
+
+                <!-- Right Column - Contact & Info -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Contact Card -->
+                    <div class="bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl shadow-xl p-8 text-white sticky top-30">
+                        <h3 class="text-2xl font-bold mb-6">¿Interesado en este proyecto?</h3>
+                        <div class="space-y-4">
+                            <a 
+                                href={waLink    }
+                                class="block w-full bg-white text-brand-600 text-center py-4 px-6 rounded-xl font-bold hover:bg-brand-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                            >
+                                <span class="flex items-center justify-center gap-2">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                    </svg>
+                                    Contactar por WhatsApp
+                                </span>
+                            </a>
+
+                            {project.brochure_link && (
+                                <a 
+                                    href={project.brochure_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="block w-full bg-white/10 backdrop-blur-sm text-white text-center py-4 px-6 rounded-xl font-bold hover:bg-white/20 transition-all duration-300 border-2 border-white/30"
+                                >
+                                    <span class="flex items-center justify-center gap-2">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        Descargar Brochure
+                                    </span>
+                                </a>
+                            )}
+
+                            {project.video_link && (
+                                <a 
+                                    href={'https://www.youtube.com/watch?v='+project.video_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="block w-full bg-white/10 backdrop-blur-sm text-white text-center py-4 px-6 rounded-xl font-bold hover:bg-white/20 transition-all duration-300 border-2 border-white/30"
+                                >
+                                    <span class="flex items-center justify-center gap-2">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Ver Video
+                                    </span>
+                                </a>
+                            )}
+                        </div>
+
+                        
+                    </div>
+
+                
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <span class="hidden" id="project-id">{project.id}</span>
+</Layout>
+
+<script src="../../services/project.service.ts"></script>
+
+<script  >
+    // Initialize Leaflet map if coordinates are available
+    import L from 'leaflet';
+    import '@justinribeiro/lite-youtube';
+    import { ProjectService } from '../../services/project.service.ts';
+    
+    
+    const mapElement = document.getElementById('map');
+    if (mapElement) {
+        const lat = parseFloat(mapElement.dataset.lat || '0');
+        const lng = parseFloat(mapElement.dataset.lng || '0');
+        
+        if (lat !== 0 && lng !== 0) {
+            const map = L.map('map').setView([lat, lng], 15);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            const icon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+            
+            L.marker([lat, lng], { icon }).addTo(map)
+                .bindPopup('<b>' + document.querySelector('h1')?.textContent + '</b>')
+                .openPopup();
+        }
+    }
+
+    (async () => {
+
+        try {
+            const projectId = document.getElementById('project-id')?.textContent!;
+            if(localStorage.getItem('project_visited_'+projectId)) return;
+            await new ProjectService().registerVisit(parseInt(projectId));
+            localStorage.setItem('project_visited_'+projectId, 'true');
+        } catch (error) {
+            console.error('Error al registrar visita:', error);
+        }
+    })()
+</script>
+
+<style>
+    .prose {
+        white-space: pre-wrap;
+    }
+    
+    #map {
+        z-index: 1;
+    }
+</style>

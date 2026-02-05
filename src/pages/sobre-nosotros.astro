@@ -1,0 +1,197 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+export const prerender = true
+
+const values = [
+    {
+        title: "Profesionalismo",
+        description: "Actuamos con seriedad, respeto y dedicación en cada interacción y proyecto.",
+        icon: "💼"
+    },
+    {
+        title: "Excelencia",
+        description: "Buscamos incansablemente la más alta calidad en nuestros servicios y resultados.",
+        icon: "🏆"
+    },
+    {
+        title: "Orientación al cliente",
+        description: "Nuestros clientes son el centro de todo lo que hacemos, priorizando sus necesidades.",
+        icon: "👥"
+    },
+    {
+        title: "Integridad",
+        description: "Operamos con honestidad y ética inquebrantable en todas nuestras gestiones.",
+        icon: "⚖️"
+    },
+    {
+        title: "Compromiso",
+        description: "Estamos plenamente dedicados a cumplir nuestras promesas y objetivos.",
+        icon: "🤝"
+    },
+    {
+        title: "Innovación",
+        description: "Adoptamos nuevas ideas y tecnologías para ofrecer mejores soluciones inmobiliarias.",
+        icon: "💡"
+    },
+    {
+        title: "Sostenibilidad",
+        description: "Promovemos prácticas responsables que cuidan el medio ambiente y la comunidad.",
+        icon: "🌱"
+    }
+];
+
+const timeline = [
+    {
+        year: "2015 - 2017",
+        title: "Fundación y Primeros Pasos",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam."
+    },
+    {
+        year: "2018 - 2020",
+        title: "Expansión Regional",
+        description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident."
+    },
+    {
+        year: "2021 - 2023",
+        title: "Consolidación Digital",
+        description: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore."
+    },
+    {
+        year: "2024 - Presente",
+        title: "Liderazgo Sostenible",
+        description: "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
+    }
+];
+---
+
+<Layout title="Sobre Nosotros">
+    <div class="bg-gray-50 min-h-screen">
+        <!-- Hero Section -->
+        <section class="pt-32 pb-16 px-6 relative overflow-hidden">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-linear-to-b from-brand-100/20 to-transparent pointer-events-none"></div>
+            <div class="max-w-7xl mx-auto text-center relative z-10">
+                <span class="text-brand-600 font-semibold tracking-wider text-sm uppercase mb-3 block">Nuestra Historia</span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
+                    Brindamos la mejor <span class="text-brand-600">garantía</span>,<br>para tu futuro.
+                </h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    En 2012, nace nuestra iniciativa empresarial, “Inversiones e inmobiliaria Leidy Diana S.A.C., en la ciudad de Huamancaca Chico, Chupaca, Junín.
+                </p>
+            </div>
+        </section>
+
+        <!-- Who We Are Section -->
+        <section class="py-16 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="bg-white rounded-4xl md:p-12 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:gap-12">
+                    <div class="w-full md:w-1/2">
+                        <div class="relative aspect-4/3 rounded-t-2xl md:rounded-2xl overflow-hidden shadow-lg bg-gray-200">
+                            <!-- Placeholder for Image -->
+                            <img src="/images/equipo-leidy.webp" alt="Imagen Corporativa" class="w-full h-full object-cover">
+                             
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2 space-y-6 p-4 md:p-0">
+                        <h2 class="text-3xl font-bold text-gray-900">Quiénes Somos</h2>
+                        <div class="space-y-4 text-gray-600 leading-relaxed text-lg">
+                            <p>
+                                Creada con el sueño de ser, tu inmobiliaria de confianza, un lugar donde te puedas sentir seguro de poder adquirir la propiedad ideal para ti y tu familia. Con el paso de los años nos hemos consolidado en el mercado inmobiliario en el Valle del Mantaro.
+                            </p>
+                            <p>
+                                
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission & Vision -->
+        <section class="py-16 px-6 bg-white">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Mission -->
+                <div class="bg-brand-50/50 rounded-3xl p-10 border border-brand-100/50 hover:shadow-lg transition-all duration-300">
+                    <div class="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center mb-6 text-2xl">
+                        🚀
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Nuestra Misión</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Ofrecer servicios inmobiliarios de la más alta calidad, basados en la excelencia, la integridad, la ética profesional y la responsabilidad social.
+            A través de un equipo altamente capacitado y comprometido garantizamos la satisfacción de nuestros clientes maximizando el valor de cada proyecto y transacción.
+                    </p>
+                </div>
+                <!-- Vision -->
+                <div class="bg-indigo-50/50 rounded-3xl p-10 border border-indigo-100/50 hover:shadow-lg transition-all duration-300">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-6 text-2xl">
+                        👁️
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Nuestra Visión</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Ser líderes en el desarrollo y ejecución de proyectos inmobiliarios innovadores y sostenibles, así como en la asesoría integral para la compra y venta de bienes inmuebles, proporcionando soluciones que superen las expectativas de nuestros clientes, contribuyendo al crecimiento y desarrollo sostenible de las comunidades en las que operamos.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Values Section -->
+        <section class="py-20 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nuestros Valores</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        Los pilares fundamentales que guían cada uno de nuestros pasos.
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {values.map(value => (
+                        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group">
+                            <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">{value.icon}</div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">{value.title}</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">{value.description}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section class="py-20 px-6 bg-white overflow-hidden">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nuestra Trayectoria</h2>
+                    <p class="text-gray-600">Una historia de crecimiento constante</p>
+                </div>
+                
+                <div class="relative">
+                    <!-- Vertical Line -->
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gray-200 hidden md:block"></div>
+
+                    <div class="space-y-12 md:space-y-24">
+                        {timeline.map((item, index) => (
+                            <div class={`flex flex-col md:flex-row items-center justify-between relative group ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                                
+                                <!-- Dot on line -->
+                                <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-4 border-brand-500 rounded-full z-10 hidden md:block shadow-sm group-hover:scale-150 transition-transform duration-300"></div>
+
+                                <!-- Content Side (Empty for balancing) -->
+                                <div class="w-full md:w-5/12 hidden md:block"></div>
+
+                                <!-- Text Content -->
+                                <div class="w-full md:w-5/12 bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300 hover:bg-white relative">
+                                    <span class="inline-block px-3 py-1 bg-brand-100 text-brand-700 text-xs font-bold rounded-full mb-3">
+                                        {item.year}
+                                    </span>
+                                    <h3 class="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                                    <p class="text-gray-600 text-sm leading-relaxed">
+                                        {item.description}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</Layout>

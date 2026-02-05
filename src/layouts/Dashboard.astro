@@ -1,0 +1,182 @@
+---
+import "bootstrap-icons/font/bootstrap-icons.css";
+
+const routes = [
+    { path: "/admin/dashboard", name: "Dashboard", icon: "bi bi-speedometer2" },
+    { path: "/admin/proyectos", name: "Proyectos", icon: "bi bi-grid" },
+    { path: "/admin/asesores", name: "Asesores", icon: "bi bi-people" },
+];
+
+const currentPath = Astro.request.url;
+const isActive = (path: string) => {
+    return currentPath.includes(path);
+};
+---
+
+<script>
+    import Swal from "sweetalert2";
+
+    const currentPath = window.location.pathname;
+    const btnLogout = document.getElementById("btn-logout")!;
+
+    btnLogout.addEventListener("click", async () => {
+        try {
+            const result = await Swal.fire({
+                title: "¿Cerrar sesión?",
+                text: "¿Estás seguro de que deseas salir?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, salir",
+                cancelButtonText: "Cancelar",
+            });
+
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Cerrando sesión...",
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+                const res = await fetch("/auth/logout", {
+                    method: 'POST'
+                });
+                if (!res.ok) {
+                    throw new Error("No se pudo cerrar la sesión");
+                }
+                window.location.replace("/");
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo cerrar la sesión",
+            });
+        }
+    });
+</script>
+
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Administración</title>
+
+        <link rel="icon" href="/favicon/favicon.ico">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+        <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png">
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+            crossorigin="anonymous"
+        />
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+            crossorigin=""
+        />
+    </head>
+    <body>
+        <div class="dashboard-layout">
+            <div
+                class="d-flex flex-column shrink-0 p-3 text-bg-dark h-100"
+                style="width: 280px; min-height: 100vh;"
+            >
+                <a
+                    href="/admin/dashboard"
+                    class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+                >
+                    <span class="fs-4">Panel Admin</span>
+                </a>
+                <hr />
+                <ul class="nav nav-pills flex-column mb-auto">
+                    {
+                        routes.map((route) => (
+                            <li class="nav-item">
+                                <a
+                                    href={route.path}
+                                    class:list={[
+                                        "nav-link",
+                                        "text-white",
+                                        { active: isActive(route.path) },
+                                    ]}
+                                >
+                                    <i class={route.icon} />
+                                    {route.name}
+                                </a>
+                            </li>
+                        ))
+                    }
+                </ul>
+                <hr />
+                <div class="dropdown">
+                    <button
+                        id="btn-logout"
+                        class="btn btn-danger w-100 d-flex align-items-center justify-content-center"
+                    >
+                        <span class="me-2">Cerrar Sesión</span>
+                        <!-- Simple Logout Icon -->
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-box-arrow-right"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"
+                            ></path>
+                            <path
+                                fill-rule="evenodd"
+                                d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"
+                            ></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="dashboard-content">
+                <slot />
+            </div>
+        </div>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"></script>
+    </body>
+</html>
+
+<style scoped>
+    .dashboard-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+    }
+
+    .dashboard-content {
+        height: 100dvh;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .nav-link.active {
+        background-color: #0d6efd;
+        pointer-events: none;
+    }
+
+    .nav-link {
+        color: white;
+    }
+
+    .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+</style>

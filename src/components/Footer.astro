@@ -1,0 +1,256 @@
+---
+const currentYear = new Date().getFullYear();
+import claimsBookImage from "../assets/libro_reclamaciones.png";
+---
+
+<footer class="bg-gray-900 text-white pt-16 pb-8">
+    <div class="max-w-7xl mx-auto px-6">
+        <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12"
+        >
+            <!-- Brand Section -->
+            <div class="space-y-4">
+                <h2
+                    class="text-2xl font-bold bg-linear-to-r from-brand-400 to-brand-200 bg-clip-text text-transparent inline-block"
+                >
+                    Leidy Diana S.A.C.
+                </h2>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Brindamos la mejor garantía para tu futuro.
+                </p>
+                <div class="flex gap-4 pt-2">
+                    <!-- Facebook -->
+                    <a
+                        href="https://www.facebook.com/inmobiliaria.leidy/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition-all duration-300"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><path
+                                d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"
+                            ></path></svg
+                        >
+                    </a>
+                    <!-- Instagram -->
+                    <a
+                        href="https://www.instagram.com/leidyinmobiliaria/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-pink-600 hover:text-white transition-all duration-300"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><rect
+                                x="2"
+                                y="2"
+                                width="20"
+                                height="20"
+                                rx="5"
+                                ry="5"></rect><path
+                                d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"
+                            ></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"
+                            ></line></svg
+                        >
+                    </a>
+                    
+                    <a
+                        href="https://www.tiktok.com/@leidyinmobiliaria"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-black hover:text-white hover:border hover:border-gray-700 transition-all duration-300"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"
+                            ></path></svg
+                        >
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-lg font-bold text-white mb-6">
+                    Enlaces Rápidos
+                </h3>
+                <ul class="space-y-3">
+                    <li>
+                        <a
+                            href="/"
+                            class="text-gray-400 hover:text-brand-400 transition-colors duration-200 text-sm flex items-center gap-2"
+                        >
+                            <span class="w-1.5 h-1.5 rounded-full bg-brand-500"
+                            ></span>
+                            Inicio
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="/proyectos"
+                            class="text-gray-400 hover:text-brand-400 transition-colors duration-200 text-sm flex items-center gap-2"
+                        >
+                            <span
+                                class="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-brand-500"
+                            ></span>
+                            Proyectos
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="/sobre-nosotros"
+                            class="text-gray-400 hover:text-brand-400 transition-colors duration-200 text-sm flex items-center gap-2"
+                        >
+                            <span
+                                class="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-brand-500"
+                            ></span>
+                            Nosotros
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="/contacto"
+                            class="text-gray-400 hover:text-brand-400 transition-colors duration-200 text-sm flex items-center gap-2"
+                        >
+                            <span
+                                class="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-brand-500"
+                            ></span>
+                            Contacto
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div>
+                <h3 class="text-lg font-bold text-white mb-6">Contáctanos</h3>
+                <ul class="space-y-4 text-sm text-gray-400">
+                    <li class="flex items-start gap-3">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="text-brand-500 mt-0.5 shrink-0"
+                            ><path
+                                d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                            ></path><circle cx="12" cy="10" r="3"></circle></svg
+                        >
+                        <span
+                            >Av. 28 de Julio S/N - Plaza Principal<br />Huamancaca Chico,
+                            Junín</span
+                        >
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="text-brand-500 shrink-0"
+                            ><path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+                            ></path></svg
+                        >
+                        <span>+51 996 191 954</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="text-brand-500 shrink-0"
+                            ><rect x="2" y="4" width="20" height="16" rx="2"
+                            ></rect><path
+                                d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
+                            ></path></svg
+                        >
+                        <span>contacto@leidydiana.com</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Schedule -->
+            <!-- Claims Book -->
+            <div class="flex flex-col items-start gap-4">
+                <a href="#" class="block hover:opacity-80 transition-opacity">
+                    <img
+                        src={claimsBookImage.src}
+                        alt="Libro de Reclamaciones"
+                        class="h-24 object-contain "
+                    />
+                </a>
+                <div class="space-y-2 flex flex-col items-start w-full">
+                    <a
+                        href="#"
+                        class="text-sm font-semibold text-white hover:text-brand-400 transition-colors w-full pb-2"
+                    >
+                        Quejas y Reclamos
+                    </a>
+                    <a
+                        href="#"
+                        class="text-sm font-semibold text-white hover:text-brand-400 transition-colors w-full pb-2"
+                    >
+                        Sugerencias
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div
+            class="border-t border-gray-800 pt-8 mt-8 text-center text-sm text-gray-500 flex flex-col md:flex-row justify-between items-center gap-4"
+        >
+            <p>
+                &copy; {currentYear} Inversiones y Inmobiliaria Leidy Diana S.A.C.
+                Todos los derechos reservados.
+            </p>
+            <div class="flex gap-6">
+                <a href="/public/politica-de-calidad.pdf" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors"
+                    >Política de Calidad</a
+                >
+            </div>
+        </div>
+    </div>
+</footer>
