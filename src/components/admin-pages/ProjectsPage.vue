@@ -49,7 +49,7 @@
         <td>
 
           <div class="d-flex align-items-center gap-2">
-            <a :href="'/admin/proyectos/' + project.id" class="btn btn-warning btn-sm">
+            <a :href="'/admin/proyectos/editar/' + project.id" class="btn btn-warning btn-sm">
               <i class="bi bi-pencil"></i>
             </a>
             <a :href="'/proyectos/' + project.slug" class="btn btn-info btn-sm  text-white">

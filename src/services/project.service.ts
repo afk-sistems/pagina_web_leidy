@@ -1,4 +1,4 @@
-import type { IProjectList, IProjectListFiltering } from "../interfaces/project.interface";
+import type { IProject, IProjectList, IProjectListFiltering } from "../interfaces/project.interface";
 import { supabase } from "../lib/supabase";
 
 export class ProjectService {
@@ -52,6 +52,22 @@ export class ProjectService {
         const { data, error } = await supabase.rpc('increment_views', { project_id: projectId })
 
         if(error) throw error;
+
+    }
+
+    async getPropertyById(id:number):Promise<IProject>{
+
+        const {data, error } = await supabase
+            .from(this.tbl_name)
+            .select()
+            .eq("id", id)
+            .limit(1)
+            .single()
+            ;
+
+        if(error) throw error;
+
+        return data;
 
     }
 
