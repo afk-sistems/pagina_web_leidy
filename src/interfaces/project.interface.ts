@@ -32,6 +32,7 @@ export interface IProject{
 export interface IProjectList{
     id: string;
     name: string;
+    slug: string;
     category_id: number;
     category_name: string;
     district_id: number;
@@ -44,9 +45,10 @@ export interface IProjectList{
 
 export interface IAddProject extends Omit<IProject, 'id' | 'created_at' | 'updated_at' | 'images' | 'category_name' | 'district_name'>{
     images: {
-        file: File;
-        temporalUrl: string;
+        file?: File;
+        temporalUrl?: string;
         alt: string;
+        url: string
     }[]
 }
 

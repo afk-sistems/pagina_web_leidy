@@ -188,7 +188,7 @@
                             <td class="text-center">{{ index + 1 }}</td>
                             <td><img width="70px" height="70px" class="img-preview rounded mx-auto d-block" :src="image.temporalUrl" alt=""></td>
                             <td class="text-center">
-                                {{ image.file.name }}
+                                {{ image.file!.name }}
                             </td>
                             <td class="text-center">
                                 <input type="text" class="form-control" name="" id="" v-model="image.alt" placeholder="Describe la imagen">
@@ -230,7 +230,7 @@ import PreviewFileDialog from '../sub-components/preview-file-dialog.vue';
 import useVuelidate from '@vuelidate/core';
 import { helpers, minLength, minValue, required, requiredIf, url } from '@vuelidate/validators';
 import L, { type LatLngExpression } from 'leaflet';
-import { onMounted, reactive, ref, watch, onUnmounted } from 'vue';
+import { onMounted, reactive, ref, watch, onUnmounted, toRaw } from 'vue';
 import { DistrictService } from '../../services/districts.service';
 import { CategoryService } from '../../services/category.service';
 import type { ICategory } from '../../interfaces/category.interface';
@@ -249,7 +249,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   // Es buena práctica revocar las URLs cuando el componente se destruye
-  projectForm.images.forEach(item => URL.revokeObjectURL(item.temporalUrl));
+  projectForm.images.forEach(item => URL.revokeObjectURL(item.temporalUrl!));
 });
 
 const isDialogOpen = ref(false);
@@ -357,7 +357,8 @@ const handleNewFile = (file:File) => {
     projectForm.images.push({
         file,
         temporalUrl: URL.createObjectURL(file),
-        alt: ""
+        alt: "",
+        url: ""
     });
 }
 
@@ -365,7 +366,7 @@ const $v = useVuelidate(formRules,projectForm);
 
 
 const removeRow = (index:number) => {
-    URL.revokeObjectURL(projectForm.images[index].temporalUrl);
+    URL.revokeObjectURL(projectForm.images[index].temporalUrl!);
     projectForm.images.splice(index,1);
 }
 
@@ -404,7 +405,16 @@ const submitForm = async () => {
 
     try{
         
-        const response = await new ProjectService().addNew(projectForm);
+        const formValue = toRaw(projectForm);
+        
+        for(const image of formValue.images){
+            const clave = await uploadImage(image.file!);
+            delete image.file;
+            delete image.temporalUrl;
+            image.url = `https://static.leidyinmobiliaria.com/${clave}`;
+        }
+
+        const response = await new ProjectService().addNew(formValue);
 
         Swal.close();
 
@@ -424,10 +434,12 @@ const submitForm = async () => {
         }
         
     }catch(error){
+        Swal.hideLoading();
         Swal.close();
+        
         Swal.fire({
             title: 'Error',
-            text: 'Ocurrió un error al agregar el proyecto',
+            text: 'Ocurrió un error al agregar el proyecto, '+error,
             icon: 'error',
             confirmButtonText: 'Aceptar',
              
@@ -440,6 +452,17 @@ const getVideoId = (url:string) => {
     const query = url.split("?")[1];
     const params = new URLSearchParams(query);
     return params.get("v");
+}
+
+const uploadImage = async (file:File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await fetch("/api/upload-file", {
+        method: "POST",
+        body: formData
+    });
+    const data = await response.json();
+    return data.clave;   
 }
 
 </script>

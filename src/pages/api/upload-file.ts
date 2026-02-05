@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { Upload } from "@aws-sdk/lib-storage";
-import {S3Client} from "@aws-sdk/client-s3";
+import {DeleteObjectCommand, S3Client} from "@aws-sdk/client-s3";
 export const POST:APIRoute = async (context) => {
     try {
         const body = await context.request.formData();
@@ -10,6 +10,7 @@ export const POST:APIRoute = async (context) => {
         }
 
         const env = (context.locals as any).runtime.env;
+
 
         const clave = `imagenes/${Date.now()}-${file.name}`;
         const bucket = env.R2_BUCKET_NAME;
@@ -41,6 +42,53 @@ export const POST:APIRoute = async (context) => {
         });
 
         await subida.done();
+
+        return new Response(JSON.stringify({ clave }), { status: 200, headers: { "Content-Type": "application/json" } });
+         
+    } catch (error) {
+        
+        return new Response(JSON.stringify({ error: "Error al subir el archivo, " + error }), { status: 500, headers: { "Content-Type": "application/json" } });   
+    }
+}
+
+
+export const DELETE:APIRoute = async (context) => {
+    
+    const body = await context.request.json();
+    const headers = context.request.headers;
+
+    if(headers.get("Content-Type") !== "application/json") {
+        return new Response(JSON.stringify({ error: "Content-Type no es application/json" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    }
+
+    try {
+        const clave = body.clave;
+        if (!clave) {
+            return new Response(JSON.stringify({ error: "No se envió ninguna clave de archivo" }), { status: 400, headers: { "Content-Type": "application/json" } });
+        }
+
+        const env = (context.locals as any).runtime.env;
+
+        const bucket = env.R2_BUCKET_NAME;
+        const accessKey = env.R2_ACCESS_KEY;
+        const secretKey = env.R2_SECRET_KEY;
+        const cdnUrl = env.R2_CDN_URL;
+
+        const s3 = new S3Client({
+            region: "auto",
+            endpoint: cdnUrl,
+            credentials: {
+                accessKeyId: accessKey,
+                secretAccessKey: secretKey,
+            },
+        });
+
+        const commnd = new DeleteObjectCommand({
+            Bucket: bucket,
+            Key: clave,
+        });
+
+        const response = await s3.send(commnd);
 
         return new Response(JSON.stringify({ clave }), { status: 200, headers: { "Content-Type": "application/json" } });
          

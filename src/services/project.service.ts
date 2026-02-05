@@ -21,7 +21,7 @@ export class ProjectService {
     async loadAllOnAdmin(filters:{[key:string]:any}){
         const {data, error} = await supabase
         .from(this.tbl_name)
-        .select('id, name, category_id, tbl_category(name), district_id, tbl_districts(name) , views, visible_on_site, created_at, updated_at')
+        .select('id, name, category_id, slug, tbl_category(name), district_id, tbl_districts(name) , views, visible_on_site, created_at, updated_at')
         .order('name', { ascending: true })
         ;
 
@@ -38,7 +38,8 @@ export class ProjectService {
                 views: row.views,
                 visible_on_site: row.visible_on_site,
                 created_at: row.created_at,
-                updated_at: row.updated_at
+                updated_at: row.updated_at,
+                slug: row.slug
             }
         })
 
