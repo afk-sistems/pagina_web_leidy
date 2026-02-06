@@ -6,5 +6,5 @@ const { id } = Astro.params;
 
 ---
 <Dashboard>
-    <ProjectsEdit client:only id={id}/>
+    <ProjectsEdit client:only id={id!}/>
 </Dashboard>

@@ -11,7 +11,7 @@ if(!slug) return Astro.redirect('/');
 
 const project = await new ProjectService().getPropertyBySlug(slug) as IProject;
 
-if(!project) throw new Error('Project not found');
+if(!project) return Astro.redirect('/404');
 
 
 

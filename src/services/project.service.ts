@@ -62,7 +62,7 @@ export class ProjectService {
             .select()
             .eq("id", id)
             .limit(1)
-            .single()
+            .maybeSingle()
             ;
 
         if(error) throw error;
@@ -107,8 +107,10 @@ export class ProjectService {
         .eq('slug', slug)
         .eq('visible_on_site', true)
         .limit(1)
-        .single();
+        .maybeSingle();
         if(error) throw error;
+
+        if(!data) return null;
 
         const {tbl_category, tbl_districts, ...row} = data as any;
 
@@ -121,6 +123,15 @@ export class ProjectService {
 
         return mappedData;
         
+    }
+
+    async update(id:number, data:any){
+        const {error} = await supabase
+        .from(this.tbl_name)
+        .update(data)
+        .eq('id', id)
+
+        if(error) throw error;
     }
 
 

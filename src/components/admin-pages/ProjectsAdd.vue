@@ -123,7 +123,7 @@
 
             <div class="col-12">
                 <label for="" class="form-label">Mapa</label>
-                <div id="map">
+                <div id="map" >
 
                 </div>
             </div>
@@ -405,14 +405,19 @@ const submitForm = async () => {
 
     try{
         
-        const formValue = toRaw(projectForm);
+        const formValue = Object.assign({}, projectForm);
         
         for(const image of formValue.images){
             const clave = await uploadImage(image.file!);
             delete image.file;
             delete image.temporalUrl;
             image.url = `https://static.leidyinmobiliaria.com/${clave}`;
+            
+            
         }
+
+        formValue.slug = formValue.name.trim().toLowerCase().replace(/\s+/g, '-');
+        formValue.video_link = formValue.video_link ? getVideoId(formValue.video_link!) : null;
 
         const response = await new ProjectService().addNew(formValue);
 

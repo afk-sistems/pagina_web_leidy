@@ -7,7 +7,7 @@
         </div>
     </div>
 
-    <form v-else action="" @submit.prevent="submitForm">
+    <form action="" @submit.prevent="submitForm">
         <div class="row gy-3" style="max-width: 900px;">
             <div class="col-md-6">
                 <label for="name" class="form-label">Nombre <span class="text-danger">*</span></label>
@@ -18,7 +18,7 @@
             </div>
             <div class="col-md-6">
                 <label for="slug" class="form-label">Slug</label>
-                <input id="slug" class="form-control" type="text" disabled :value="projectForm.name.trim().toLowerCase().replace(/\s+/g, '-')">
+                <input id="slug" class="form-control" type="text" disabled :value="projectForm.slug">
             </div>
 
             <div class="col-md-12">
@@ -128,8 +128,8 @@
             </div>
 
             <div class="col-12">
-                <label for="map" class="form-label">Mapa</label>
-                <div id="map">
+                <label for="" class="form-label">Mapa</label>
+                <div id="map" ref="mapContainer">
 
                 </div>
             </div>
@@ -185,17 +185,14 @@
                             <th class="text-center" style="width: 30px;">#</th>
                             <th class="text-center" style="width: 80px;">Imagen</th>
                             <th class="text-center">Nombre</th>
-                            <th class="text-center">Texto</th>
                             <th class="text-center" style="width: 70px;">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(image, index) in projectForm.images" :key="index">
+                        <tr v-for="(image, index) in projectForm.images" :key="index" :class="{ 'table-success': image.url === '' }">
                             <td class="text-center">{{ index + 1 }}</td>
-                            <td><img width="70px" height="70px" class="img-preview rounded mx-auto d-block" :src="image.temporalUrl || image.url" alt=""></td>
-                            <td class="text-center">
-                                {{ image.file ? image.file.name : 'Imagen existente' }}
-                            </td>
+                            <td><img width="100px" height="100px" class="img-preview rounded mx-auto d-block" :src="image.temporalUrl || image.url" alt=""></td>
+                            
                             <td class="text-center">
                                 <input type="text" class="form-control" name="" id="" v-model="image.alt" placeholder="Describe la imagen">
                             </td>
@@ -212,6 +209,14 @@
                         </tr>
                     </tbody>
                 </table>
+
+                <p class="alert alert-danger" v-if="projectForm.images.length === 0">
+                    Debe agregar al menos una imagen al proyecto
+                </p>
+
+                <p class="alert alert-warning" v-if="imagesToDelete.length > 0">
+                    Se {{ imagesToDelete.length === 1 ? 'va a eliminar' : 'van a eliminar' }} {{ imagesToDelete.length }} imagen{{ imagesToDelete.length === 1 ? '' : 'es' }} del servidor
+                </p>
             </div>
 
             <div class="col-12">
@@ -241,7 +246,7 @@ import PreviewFileDialog from '../sub-components/preview-file-dialog.vue';
 import useVuelidate from '@vuelidate/core';
 import { helpers, minLength, minValue, required, requiredIf, url } from '@vuelidate/validators';
 import L, { type LatLngExpression } from 'leaflet';
-import { onMounted, reactive, ref, watch, onUnmounted, toRaw } from 'vue';
+import { onMounted, reactive, ref, watch, onUnmounted, toRaw, useTemplateRef } from 'vue';
 import { DistrictService } from '../../services/districts.service';
 import { CategoryService } from '../../services/category.service';
 import type { ICategory } from '../../interfaces/category.interface';
@@ -258,13 +263,14 @@ const props = defineProps({
     }
 });
 
+const imagesToDelete:any[] = [];
+let oldValue:IAddProject | null = null;
+
 const isLoading = ref(true);
 const isDialogOpen = ref(false);
 const districtList = ref<IDistrict[]>([]);
 const categoryList = ref<ICategory[]>([]);
-let map: L.Map | null = null;
-let marker: L.Marker | null = null;
-
+const mapContainer = useTemplateRef("mapContainer");
 const projectForm = reactive<IAddProject>({
     description: "",
     slug:"",
@@ -325,7 +331,7 @@ onMounted(async () => {
         await Promise.all([loadDistricts(), loadCategories(), loadProjectData()]);
         configureMap();
     } catch (error) {
-        console.error("Error loading data", error);
+        
         Swal.fire({
             icon: 'error',
             title: 'Error',
@@ -336,8 +342,8 @@ onMounted(async () => {
                 window.location.href = '/admin/proyectos';
             }
         });
-
-
+        
+        
     } finally {
         isLoading.value = false;
     }
@@ -347,21 +353,20 @@ onUnmounted(() => {
   projectForm.images.forEach(item => {
       if (item.temporalUrl) URL.revokeObjectURL(item.temporalUrl);
   });
-  if (map) {
-      map.remove();
-  }
+  
 });
 
 const configureMap = () => {
-    const mapUbi:LatLngExpression = [projectForm.latitude, projectForm.longitude];
+    //const mapUbi:LatLngExpression = [projectForm.latitude, projectForm.longitude];
+    const mapUbi:LatLngExpression = [-12.080907, -75.242017];
 
-    map = L.map('map').setView(mapUbi, 13);
+    const map = L.map(mapContainer.value!).setView(mapUbi, 13);
     L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
         maxZoom: 20,
         subdomains:['mt0','mt1','mt2','mt3']
     }).addTo(map);
     
-    marker = L.marker(mapUbi).addTo(map);
+    const marker = L.marker(mapUbi).addTo(map);
     
     map.on('click', ($event) => {
       if(marker) marker.setLatLng($event.latlng);
@@ -381,9 +386,10 @@ const loadCategories = async () => {
 }
 
 const loadProjectData = async () => {
-    const project = await new ProjectService().getPropertyById(props.id);
+    const project = await new ProjectService().getPropertyById(parseInt(props.id as string));
     
     projectForm.name = project.name;
+    projectForm.slug = project.slug;
     projectForm.description = project.description;
     projectForm.category_id = project.category_id;
     projectForm.district_id = project.district_id;
@@ -402,11 +408,14 @@ const loadProjectData = async () => {
     projectForm.video_link = project.video_link;
     projectForm.visible_on_site = project.visible_on_site;
     projectForm.views = project.views;
+
+    oldValue = Object.assign({}, toRaw(projectForm));
     
     // Map existing images
     projectForm.images = project.images.map(img => ({
-        url: img.url,
-        alt: img.alt
+        temporalUrl: img.url,
+        alt: img.alt,
+        url: img.url
     }));
 }
 
@@ -422,60 +431,24 @@ const handleNewFile = (file:File) => {
 const removeRow = async (index:number) => {
     const image = projectForm.images[index];
     
-    if (image.temporalUrl) {
-        // New image, just remove locally
-        URL.revokeObjectURL(image.temporalUrl);
-        projectForm.images.splice(index,1);
-    } else {
-        // Existing image, ask for confirmation before deleting from server
-        const result = await Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Esta acción eliminará la imagen del servidor permanentemente y no se puede deshacer.",
-            icon: 'warning',
+    if(image.url && image.url.startsWith("https://static.leidyinmobiliaria.com/")){
+
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Se eliminará la imagen del servidor, esta acción es irreversible",
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        });
-
-        if (result.isConfirmed) {
-            try {
-                // Extract key from URL
-                // URL format: https://static.leidyinmobiliaria.com/imagenes/timestamp-name.ext
-                const urlParts = image.url.split('static.leidyinmobiliaria.com/');
-                if (urlParts.length > 1) {
-                    const key = urlParts[1];
-                    
-                    Swal.fire({
-                        title: 'Eliminando...',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    await deleteImage(key);
-                    
-                    projectForm.images.splice(index,1);
-                    
-                    Swal.fire(
-                        'Eliminado!',
-                        'La imagen ha sido eliminada.',
-                        'success'
-                    );
-                } else {
-                    throw new Error("Formato de URL de imagen inválido");
-                }
-            } catch (error) {
-                console.error(error);
-                Swal.fire(
-                    'Error',
-                    'Hubo un problema al eliminar la imagen.',
-                    'error'
-                );
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                imagesToDelete.push(image);
+                projectForm.images.splice(index, 1);
             }
-        }
+        })
+
+    }else{
+        projectForm.images.splice(index, 1);
     }
 }
 
@@ -501,6 +474,10 @@ watch(() => projectForm.on_sale, () => {
     }
 });
 
+watch(() => projectForm.name, () => {
+    projectForm.slug = projectForm.name.toLowerCase().replace(/ /g, "-");
+});
+
 const submitForm = async () => {
     const isFormCorrect = await $v.value.$validate();
 
@@ -514,13 +491,78 @@ const submitForm = async () => {
         return;
     }
 
-    // Aquí iría la lógica de actualización, que se solicitó no tocar todavía.
-    console.log("Formulario válido, datos listos para actualizar:", toRaw(projectForm));
     Swal.fire({
-        title: 'Información',
-        text: 'Validación exitosa. La lógica de actualización está pendiente según instrucciones.',
-        icon: 'info'
+        title: 'Actualizando proyecto...',
+        text: 'Por favor espera',
+        icon: 'info',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
     });
+
+    try {
+
+        const formValue:any = toRaw(projectForm);
+
+        for(const image of imagesToDelete){
+            await deleteImage(image.clave);
+        }
+
+        //Upload new images
+        for(const image of formValue.images){
+
+            if(image.file && image.url == ""){
+                const clave = await uploadImage(image.file);
+                image.url = `https://static.leidyinmobiliaria.com/${clave}`;
+                console.log(image.url);
+            }
+            delete image.file;
+            delete image.temporalUrl;
+            
+        }
+
+        for(const prop in formValue){
+            if(formValue[prop] === (oldValue as any)[prop] && prop !== "images"){
+                
+                delete formValue[prop];
+            }
+        }
+        
+        formValue.video_link = formValue.video_link ? getVideoId(formValue.video_link!) : null;
+
+        await new ProjectService().update(parseInt(props.id as string), formValue);
+
+        window.location.href = "/admin/proyectos";
+        
+    } catch (error) {
+
+        Swal.fire({
+            title: 'Error',
+            text: 'Error al actualizar el proyecto',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+        });
+        
+    }
+}
+
+const uploadImage = async (file:File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await fetch("/api/upload-file", {
+        method: "POST",
+        body: formData
+    });
+    const data = await response.json();
+    return data.clave;   
+}
+
+const getVideoId = (url:string) => {
+    const query = url.split("?")[1];
+    const params = new URLSearchParams(query);
+    return params.get("v");
 }
 
 </script>

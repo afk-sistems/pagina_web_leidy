@@ -29,8 +29,8 @@ const formatArea = (area: number) => {
         <!-- Image Container -->
         <div class="relative aspect-4/3 overflow-hidden">
             <img 
-                :src="project.images[0].url" 
-                :alt="project.images[0].alt"
+                :src="project.images[0]?.url" 
+                :alt="project.images[0]?.alt"
                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
             
